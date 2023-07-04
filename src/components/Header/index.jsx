@@ -1,15 +1,28 @@
-import './styles.css'
-import logo from '../../assets/logo.png'
-function Header({ search, setSearch }) {
+// Header.js
+import './styles.css';
+import logo from '../../assets/logo.png';
+import { useState } from 'react';
+
+function Header({ games, filterGames }) {
+    const [search, setSearch] = useState('');
 
     function handleSearch(event) {
-        setSearch(event.target.value)
+        const searchCharacter = event.target.value;
+        setSearch(searchCharacter);
+
+        const filteredGames = games.filter((game) =>
+            game.title.toLowerCase().startsWith(searchCharacter.toLowerCase())
+        );
+        filterGames(filteredGames);
     }
+
     return (
         <header>
             <img src={logo} alt="logo" />
             <div className='header-filters'>
-                <input type="text" placeholder='     Pesquise aqui seu jogo...'
+                <input
+                    type="text"
+                    placeholder='     Pesquise aqui seu jogo...'
                     value={search}
                     onChange={handleSearch}
                 />
@@ -18,6 +31,7 @@ function Header({ search, setSearch }) {
                 </select>
             </div>
         </header>
-    )
+    );
 }
+
 export default Header;

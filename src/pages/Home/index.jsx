@@ -1,3 +1,4 @@
+// Home.js
 import { useEffect, useState } from 'react';
 import Header from '../../components/Header';
 import Card from '../../components/Card';
@@ -6,9 +7,9 @@ import Footer from '../../components/Footer';
 import Loader from '../../components/LoaderCard';
 
 function Home() {
-  const [search, setSearch] = useState('');
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [filteredGames, setFilteredGames] = useState([]);
 
   async function getGames() {
     setLoading(true);
@@ -25,11 +26,11 @@ function Home() {
       const data = await response.json();
       if (data?.error) {
         setLoading(false);
-        return
+        return;
       }
       setGames(data);
-      console.log(data);
-      setLoading(false)
+      setFilteredGames(data);
+      setLoading(false);
     } catch (error) {
       console.error('Erro ao buscar os jogos:', error);
       setLoading(false);
@@ -38,16 +39,25 @@ function Home() {
 
   useEffect(() => {
     getGames();
-
   }, []);
+
+  function handleFilterGames(filteredGames) {
+    setFilteredGames(filteredGames);
+  }
 
   return (
     <div className='home-container'>
-      <Header search={search} setSearch={setSearch} />
+      <Header games={games} filterGames={handleFilterGames} />
       <div className='cards-container'>
-        {loading ? <Loader /> : (
-          games.map((game) => (
-            <Card key={game.id} title={game.title} imageUrl={game.thumbnail} description={game.short_description}
+        {loading ? (
+          <Loader />
+        ) : (
+          filteredGames.map((game) => (
+            <Card
+              key={game.id}
+              title={game.title}
+              imageUrl={game.thumbnail}
+              description={game.short_description}
             />
           ))
         )}
